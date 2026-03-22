@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Focus Tracker</title>
+</head>
+<body>
+
+<h2>Daily Focus Tracker</h2>
+
+<input id="taskInput" placeholder="Enter task" />
+<button onclick="addTask()">Add</button>
+
+<ul id="taskList"></ul>
+
+<script>
+const API = "http://localhost:5000";
+
+async function addTask() {
+  const name = document.getElementById("taskInput").value;
+
+  await fetch(API + "/add", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name })
+  });
+
+  loadTasks();
+}
+
+async function loadTasks() {
+  const res = await fetch(API + "/tasks");
+  const tasks = await res.json();
+
+  const list = document.getElementById("taskList");
+  list.innerHTML = "";
+
+  tasks.forEach(t => {
+    const li = document.createElement("li");
+    li.innerText = t.name + (t.completed ? " ✅" : "");
+    list.appendChild(li);
+  });
+}
+
+loadTasks();
+</script>
+
+</body>
+</html>
